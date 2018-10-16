@@ -22,7 +22,18 @@ basePath: /v0
 # items
 definitions:
   Image:
-    description: "Image is an objects represents picture in gallery"
+    description: "Image is an objects represents image in galerry"
+    properties:
+      meta:
+        $ref: '#/definitions/ImageMeta'
+      base64:
+        $ref: '#/definitions/ImageData'
+  ImageList:
+    type: array
+    items:
+      $ref: '#/definitions/ImageMeta'
+  ImageMeta:
+    description: "ImageMeta is an objects represents image meta data"
     properties:
       id:
         type: string
@@ -32,14 +43,15 @@ definitions:
         example: "d290f1ee-6c54-4b01-90e6-d701748f0851"
       creationTime:
         $ref: '#/definitions/TimeStamp'
-      path:
+      location:
         type: string
         description: "Image path"
         example: "s3://bucket/foo/pic1.jpg"
-  ImageList:
-    type: array
-    items:
-      $ref: '#/definitions/Image'
+  ImageData:
+    type: string
+    description: "ImageData represents base64 encoded raw image"
+    description: "Base64 encoded image"
+    example:  "Zm9vCg=="
   TimeStamp:
     type: string
     description: "Time stamp for an event related to an object, for example when
@@ -91,6 +103,14 @@ responses:
     description: "Response for listImages requests"
     schema:
       $ref: '#/definitions/ImageList'
+  ImageMetaResponse:
+    description: "Response for imageMeta requests"
+    schema:
+      $ref: '#/definitions/ImageMeta'
+  ImageDataResponse:
+    description: "Response for imageData requests"
+    schema:
+      $ref: '#/definitions/ImageData'
   HealthResponse:
     description: "Response for a health check requestt"
     schema:
@@ -180,20 +200,6 @@ paths:
           $ref: '#/responses/GeneralError'
         default:
           $ref: '#/responses/GeneralError'
-      responses:
-        200:
-          $ref: '#/responses/ImageResponse'
-        400:
-          # Invalid input image definition
-          $ref: '#/responses/GeneralError'
-        404:
-          # Image not found
-          $ref: '#/responses/GeneralError'
-        409:
-          # The updated image already exists
-          $ref: '#/responses/GeneralError'
-        default:
-          $ref: '#/responses/GeneralError'
     delete:
       summary: "Deletes an image"
       operationId: deleteImage
@@ -205,6 +211,52 @@ paths:
       responses:
         200:
           $ref: '#/responses/ImageResponse'
+        400:
+          # Invalid image id
+          $ref: '#/responses/GeneralError'
+        404:
+          # Image not found
+          $ref: '#/responses/GeneralError'
+        default:
+          $ref: '#/responses/GeneralError'
+  /store:
+    parameters: *DEFAULT_PARAMS
+    get:
+      summary: "Gets image data"
+      operationId: getImageData
+      description: "Gets the definition of an individual image data with the given
+        id"
+      parameters:
+        - in: body
+          name: imageItem
+          description: "Image to add"
+          schema:
+            $ref: '#/definitions/ImageMeta'
+      responses:
+        200:
+          $ref: '#/responses/ImageDataResponse'
+        400:
+          # Invalid image id
+          $ref: '#/responses/GeneralError'
+        404:
+          # Image not found
+          $ref: '#/responses/GeneralError'
+        default:
+          $ref: '#/responses/GeneralError'
+    delete:
+      summary: "Deletes an image data"
+      operationId: deleteImageData
+      description: "Deletes the definition of an individual image data with the
+        given id"
+      parameters:
+        - in: body
+          name: imageItem
+          description: "Image to add"
+          schema:
+            $ref: '#/definitions/ImageMeta'
+      responses:
+        200:
+          $ref: '#/responses/ImageDataResponse'
         400:
           # Invalid image id
           $ref: '#/responses/GeneralError'
