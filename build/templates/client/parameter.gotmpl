@@ -72,8 +72,8 @@ func New{{ pascalize .Name }}ParamsWithContext(ctx context.Context) *{{ pascaliz
     Context: ctx,
   }
 
-  id := requestid.FromContext(ctx)
-  params.SetXRequestID(&id)
+  //id := requestid.FromContext(ctx)
+  //params.SetXRequestID(&id)
   return params
 }
 
@@ -120,9 +120,9 @@ func ({{ .ReceiverName }} *{{ pascalize .Name }}Params) Set{{ pascalize .Timeout
 
 // WithContext adds the context to the {{ humanize .Name }} params
 func ({{ .ReceiverName }} *{{ pascalize .Name }}Params) WithContext(ctx context.Context) *{{ pascalize .Name }}Params {
-  {{ .ReceiverName }}.SetContext(ctx)
-  id := requestid.FromContext(ctx)
-  {{ .ReceiverName}}.SetXRequestID(&id)
+ // {{ .ReceiverName }}.SetContext(ctx)
+ // id := requestid.FromContext(ctx)
+ // {{ .ReceiverName}}.SetXRequestID(&id)
   return {{ .ReceiverName }}
 }
 

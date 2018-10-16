@@ -33,4 +33,9 @@ GOPATH=${BASE}/go swagger generate server --spec=${BASE}/swagger.yaml \
             --operation=listImages \
             --operation=getImage \
             --operation=deleteImage
+GOPATH=${BASE}/go glide update -v
+
+GOPATH=${BASE}/go go test -v  ./...
+
+GOPATH=${BASE}/go go install -v  ./...
 popd
