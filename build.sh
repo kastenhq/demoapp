@@ -1,15 +1,18 @@
 #! /usr/bin/bash
 
-GOPATH=$(pwd)/go swagger generate model --spec=swagger.yaml -t go/src/demoapp
+BASE=$(pwd)
 
-GOPATH=$(pwd)/go swagger generate client --spec=swagger.yaml -t go/src/demoapp \
+pushd $(pwd)/go/src
+GOPATH=${BASE}/go swagger generate model --spec=${BASE}/swagger.yaml
+
+GOPATH=${BASE}/go swagger generate client --spec=${BASE}/swagger.yaml \
             --name=rest \
             --skip-models \
             --skip-validation \
             --client-package=restclient \
-            --template-dir=build/templates
+            --template-dir=${BASE}/build/templates
 
-GOPATH=$(pwd)/go swagger generate server --spec=swagger.yaml -t go/src/demoapp \
+GOPATH=${BASE}/go swagger generate server --spec=${BASE}/swagger.yaml \
             --skip-models \
             --skip-validation \
             --client-package=restclient \
@@ -19,7 +22,7 @@ GOPATH=$(pwd)/go swagger generate server --spec=swagger.yaml -t go/src/demoapp \
             --operation=deleteImageData \
             --operation=getImageData
 
-GOPATH=$(pwd)/go swagger generate server --spec=swagger.yaml -t go/src/demoapp \
+GOPATH=${BASE}/go swagger generate server --spec=${BASE}/swagger.yaml \
             --skip-models \
             --skip-validation \
             --client-package=restclient \
@@ -30,3 +33,4 @@ GOPATH=$(pwd)/go swagger generate server --spec=swagger.yaml -t go/src/demoapp \
             --operation=listImages \
             --operation=getImage \
             --operation=deleteImage
+popd
