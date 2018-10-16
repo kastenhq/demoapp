@@ -1,0 +1,226 @@
+swagger: '2.0'
+info:
+  description: "Picture gallery as a demo app. Everyone loves pictures"
+  version: "0.1-alpha"
+  title: "demoapp"
+  contact:
+    email: support@kasten.io
+
+host: 127.0.0.1
+
+schemes:
+  - http
+
+consumes:
+  - application/json
+produces:
+  - application/json
+
+basePath: /v0
+
+# Reuseable components for demoapp, including models, responses, parameters and path
+# items
+definitions:
+  Image:
+    description: "Image is an objects represents picture in gallery"
+    properties:
+      id:
+        type: string
+        format: uuid
+        description: "Image identifier"
+        readOnly: true
+        example: "d290f1ee-6c54-4b01-90e6-d701748f0851"
+      creationTime:
+        $ref: '#/definitions/TimeStamp'
+      path:
+        type: string
+        description: "Image path"
+        example: "s3://bucket/foo/pic1.jpg"
+  ImageList:
+    type: array
+    items:
+      $ref: '#/definitions/Image'
+  TimeStamp:
+    type: string
+    description: "Time stamp for an event related to an object, for example when
+      the object was created."
+    format: "date-time"
+    example: "2016-08-29T09:12:33.001Z"
+  Error:
+    description: "Used to propagate error messages, such as for failed jobs"
+    example: "Failed to get policy for job"
+    properties:
+      message:
+        type: string
+      fields:
+        type: array
+        items:
+          $ref: '#/definitions/Field'
+      retriable:
+        type: boolean
+      cause:
+        type: object
+  ErrorDetail:
+    properties:
+      message:
+        type: string
+  ServiceInfo:
+    type: object
+    description: "Information about a demoapp service"
+    properties:
+      version:
+        type: string
+        description: "Version"
+        example: "0.0.1"
+  Field:
+    properties:
+      name:
+        type: string
+      value:
+        type: object
+responses:
+  GeneralError:
+    description: "General Error"
+    schema:
+      $ref: '#/definitions/ErrorDetail'
+  ImageResponse:
+    description: "Response for Image requests"
+    schema:
+      $ref: '#/definitions/Image'
+  ImageListResponse:
+    description: "Response for listImages requests"
+    schema:
+      $ref: '#/definitions/ImageList'
+  HealthResponse:
+    description: "Response for a health check requestt"
+    schema:
+      $ref: '#/definitions/ServiceInfo'
+parameters:
+  KeyParam:
+    name: key
+    in: "query"
+    description: "A predefined query key"
+    type: string
+  ValueParam:
+    name: value
+    in: "query"
+    description: "The query key value"
+    type: string
+  RequestIdParam:
+    name: X-Request-ID
+    in: header
+    type: string
+  ItemIdParam:
+    name: itemId
+    in: path
+    description: "Item uuid for a request"
+    required: true
+    type: string
+    format: uuid
+
+# We use DEFAULT_PARAMS to refer to a default set of parameters at the the
+# path level. These can be overriden at the operation level (GET/POST/PUT, etc.)
+# The "x-" prefix is required for swagger to recognize this as an extension
+# of the schema, otherwise this field will be skipped and the anchor ignored.
+x-DefaultParameters:
+  parameters: &DEFAULT_PARAMS
+  - $ref: '#/parameters/RequestIdParam'
+
+paths:
+  /images:
+    parameters: *DEFAULT_PARAMS
+    post:
+      summary: "Adds an Image"
+      operationId: addImage
+      description: "Adds an Image to the system"
+      parameters:
+      - in: body
+        name: imageItem
+        description: "Image to add"
+        schema:
+          $ref: '#/definitions/Image'
+      responses:
+        201:
+          $ref: '#/responses/ImageResponse'
+        400:
+          # Invalid input artifact definition
+          $ref: '#/responses/GeneralError'
+        409:
+          # The specified artifact already exists
+          $ref: '#/responses/GeneralError'
+        default:
+          $ref: '#/responses/GeneralError'
+    get:
+      summary: "Lists the existing Images"
+      operationId: listImages
+      description: "Lists the images that exist in the system"
+      responses:
+        200:
+          $ref: '#/responses/ImageListResponse'
+        default:
+          $ref: '#/responses/GeneralError'
+  /images/{itemId}:
+    parameters: *DEFAULT_PARAMS
+    get:
+      summary: "Gets info for an Image"
+      operationId: getImage
+      description: "Gets the definition of an individual artifact with the given
+        id"
+      parameters:
+        # Image id
+        - $ref: '#/parameters/ItemIdParam'
+      responses:
+        200:
+          $ref: '#/responses/ImageResponse'
+        400:
+          # Invalid image id
+          $ref: '#/responses/GeneralError'
+        404:
+          # Image not found
+          $ref: '#/responses/GeneralError'
+        default:
+          $ref: '#/responses/GeneralError'
+      responses:
+        200:
+          $ref: '#/responses/ImageResponse'
+        400:
+          # Invalid input image definition
+          $ref: '#/responses/GeneralError'
+        404:
+          # Image not found
+          $ref: '#/responses/GeneralError'
+        409:
+          # The updated image already exists
+          $ref: '#/responses/GeneralError'
+        default:
+          $ref: '#/responses/GeneralError'
+    delete:
+      summary: "Deletes an image"
+      operationId: deleteImage
+      description: "Deletes the definition of an individual image with the
+        given id"
+      parameters:
+        # Image id
+        - $ref: '#/parameters/ItemIdParam'
+      responses:
+        200:
+          $ref: '#/responses/ImageResponse'
+        400:
+          # Invalid image id
+          $ref: '#/responses/GeneralError'
+        404:
+          # Image not found
+          $ref: '#/responses/GeneralError'
+        default:
+          $ref: '#/responses/GeneralError'
+  /healthz:
+    parameters: *DEFAULT_PARAMS
+    get:
+      summary: "Service liveness check"
+      operationId: healthz
+      description: "Checks if the service is running"
+      responses:
+        200:
+          $ref: '#/responses/HealthResponse'
+        default:
+          $ref: '#/responses/GeneralError'
