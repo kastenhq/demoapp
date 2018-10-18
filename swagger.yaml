@@ -49,7 +49,6 @@ definitions:
         example: "s3://bucket/foo/pic1.jpg"
   ImageData:
     type: string
-    description: "ImageData represents base64 encoded raw image"
     description: "Base64 encoded image"
     example:  "Zm9vCg=="
   TimeStamp:
