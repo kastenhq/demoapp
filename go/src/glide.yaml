@@ -22,3 +22,7 @@ import:
   version: dc8a684882cf70c9a529887104340f44e0e138e5
 - package: github.com/golang/groupcache
   version: 02826c3e79038b59d737d3b1c0a1d937f71a4433
+- package: github.com/satori/go.uuid
+  version: v1.2.0
+- package: gopkg.in/check.v1
+  version: v1

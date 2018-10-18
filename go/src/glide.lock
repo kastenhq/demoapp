@@ -1,5 +1,5 @@
-hash: 5705d5b930b1f73a1a49be35aca2805db4c92e349e32a47d0f6c3128af75193b
-updated: 2018-10-16T15:28:25.170663193-07:00
+hash: 134b6e587024fd75e4c64ad5adb1cd14a502a216a34cd6cfcec2d044303e2004
+updated: 2018-10-17T13:06:02.07424605-07:00
 imports:
 - name: github.com/asaskevich/govalidator
   version: f9ffefc3facfbe0caee3fea233cbb6e8208f4541
@@ -49,10 +49,12 @@ imports:
   version: 975f53781597ed779763b7b65566e74c4004d8de
 - name: github.com/PuerkitoBio/urlesc
   version: de5bf2ad457846296e2031421a34e2568e304e35
+- name: github.com/satori/go.uuid
+  version: f58768cc1a7a7e77a3bd49e98cdd21419399b6a3
 - name: github.com/tylerb/graceful
   version: d72b0151351a13d0421b763b88f791469c4f5dc7
 - name: golang.org/x/net
-  version: 49bb7cea24b1df9410e1712aa6433dae904ff66a
+  version: 04a2e542c03f1d053ab3e4d6e5abcd4b66e2be8e
   subpackages:
   - context
   - context/ctxhttp
@@ -65,6 +67,8 @@ imports:
   - unicode/bidi
   - unicode/norm
   - width
+- name: gopkg.in/check.v1
+  version: 788fd78401277ebd861206a03c884797c6ec5541
 - name: gopkg.in/mgo.v2
   version: 9856a29383ce1c59f308dd1cf0363a79b5bef6b5
   subpackages:
@@ -72,4 +76,8 @@ imports:
   - internal/json
 - name: gopkg.in/yaml.v2
   version: 5420a8b6744d3b0345ab293f6fcba19c978f1183
-testImports: []
+testImports:
+- name: github.com/kr/pretty
+  version: 73f6ac0b30a98e433b289500d779f50c1a6f0712
+- name: github.com/kr/text
+  version: e2ffdb16a802fe2bb95e2e35ff34f0e53aeef34f
