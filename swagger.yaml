@@ -33,7 +33,7 @@ definitions:
     items:
       $ref: '#/definitions/ImageMeta'
   ImageMeta:
-    description: "ImageMeta is an objects represents image meta data"
+    description: "ImageMeta is an object representing image meta data"
     properties:
       id:
         type: string
