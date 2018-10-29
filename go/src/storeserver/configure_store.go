@@ -67,6 +67,15 @@ func configureAPI(api *operations.StoreAPI) http.Handler {
 		return operations.NewGetImageDataOK().WithPayload(imgData)
 	})
 
+	api.StoreImageDataHandler = operations.StoreImageDataHandlerFunc(func(params operations.StoreImageDataParams) middleware.Responder {
+		img, err := storer.Write(params.HTTPRequest.Context(), params.ImageItem)
+		if err != nil {
+			log.Printf("Failed to store image " + err.Error())
+			return operations.NewGetImageDataDefault(500).WithPayload(&models.ErrorDetail{Message: "Failed to get image " + err.Error()})
+		}
+		return operations.NewStoreImageDataCreated().WithPayload(img)
+	})
+
 	healthzOK := operations.NewHealthzOK().WithPayload(&models.ServiceInfo{Version: "0.0.1"})
 	api.HealthzHandler = operations.HealthzHandlerFunc(func(params operations.HealthzParams) middleware.Responder {
 		return healthzOK

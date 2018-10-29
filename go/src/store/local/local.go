@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"time"
 
 	"models"
 	"store"
@@ -28,6 +29,7 @@ func (s *HDD) Write(ctx context.Context, image *models.Image) (*models.Image, er
 	}
 	if image.Meta.ID == "" {
 		image.Meta.ID = uuid.New()
+		image.Meta.CreationTime = models.TimeStamp(time.Now())
 	}
 	image.Meta.Location = filepath.Join(s.StorePath, string(image.Meta.ID))
 	return image, ioutil.WriteFile(image.Meta.Location, []byte(image.Base64), 0644)
