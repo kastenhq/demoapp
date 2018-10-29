@@ -20,7 +20,8 @@ GOPATH=${BASE}/go swagger generate server --spec=${BASE}/swagger.yaml \
             --server-package=storeserver \
             --operation=healthz \
             --operation=deleteImageData \
-            --operation=getImageData
+            --operation=getImageData \
+            --operation=storeImageData \
 
 GOPATH=${BASE}/go swagger generate server --spec=${BASE}/swagger.yaml \
             --skip-models \

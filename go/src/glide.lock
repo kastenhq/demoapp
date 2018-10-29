@@ -1,10 +1,17 @@
-hash: 134b6e587024fd75e4c64ad5adb1cd14a502a216a34cd6cfcec2d044303e2004
-updated: 2018-10-17T13:06:02.07424605-07:00
+hash: 07bb9d00268c4791a4868ffd37c014cb90ab6c8b65276b8945ba072123e7bddd
+updated: 2018-10-26T15:02:36.843929733-07:00
 imports:
 - name: github.com/asaskevich/govalidator
   version: f9ffefc3facfbe0caee3fea233cbb6e8208f4541
 - name: github.com/docker/go-units
   version: 47565b4f722fb6ceae66b95f853feed578a4a51c
+- name: github.com/globalsign/mgo
+  version: 113d3961e7311526535a1ef7042196563d442761
+  subpackages:
+  - bson
+  - internal/json
+  - internal/sasl
+  - internal/scram
 - name: github.com/go-openapi/analysis
   version: 8ed83f2ea9f00f945516462951a288eaa68bf0d6
 - name: github.com/go-openapi/errors
@@ -45,6 +52,33 @@ imports:
   - jwriter
 - name: github.com/mitchellh/mapstructure
   version: 3536a929edddb9a5b34bd6861dc4a9647cb459fe
+- name: github.com/ory/dockertest
+  version: 9f1141b78507d23603f6be530587664ebb63a8d2
+  subpackages:
+  - docker
+  - docker/opts
+  - docker/pkg/archive
+  - docker/pkg/fileutils
+  - docker/pkg/homedir
+  - docker/pkg/idtools
+  - docker/pkg/ioutils
+  - docker/pkg/jsonmessage
+  - docker/pkg/longpath
+  - docker/pkg/mount
+  - docker/pkg/pools
+  - docker/pkg/stdcopy
+  - docker/pkg/system
+  - docker/pkg/term
+  - docker/pkg/term/windows
+  - docker/types
+  - docker/types/blkiodev
+  - docker/types/container
+  - docker/types/filters
+  - docker/types/mount
+  - docker/types/network
+  - docker/types/registry
+  - docker/types/strslice
+  - docker/types/versions
 - name: github.com/PuerkitoBio/purell
   version: 975f53781597ed779763b7b65566e74c4004d8de
 - name: github.com/PuerkitoBio/urlesc
@@ -54,13 +88,13 @@ imports:
 - name: github.com/tylerb/graceful
   version: d72b0151351a13d0421b763b88f791469c4f5dc7
 - name: golang.org/x/net
-  version: 04a2e542c03f1d053ab3e4d6e5abcd4b66e2be8e
+  version: 9b4f9f5ad5197c79fd623a3638e70d8b26cef344
   subpackages:
   - context
   - context/ctxhttp
   - idna
 - name: golang.org/x/text
-  version: 4d1c5fb19474adfe9562c9847ba425e7da817e81
+  version: b19bf474d317b857955b12035d2c5acb57ce8b01
   subpackages:
   - secure/bidirule
   - transform
@@ -77,7 +111,51 @@ imports:
 - name: gopkg.in/yaml.v2
   version: 5420a8b6744d3b0345ab293f6fcba19c978f1183
 testImports:
+- name: github.com/Azure/go-ansiterm
+  version: d6e3b3328b783f23731bc4d058875b0371ff8109
+  subpackages:
+  - winterm
+- name: github.com/cenkalti/backoff
+  version: 62661b46c4093e2c1f38d943e663db1a29873e80
+- name: github.com/containerd/continuity
+  version: c220ac4f01b8a301edcb9c9c05d7600249138cfa
+  subpackages:
+  - pathdriver
+- name: github.com/docker/go-connections
+  version: 97c2040d34dfae1d1b1275fa3a78dbdd2f41cf7e
+  subpackages:
+  - nat
+- name: github.com/konsorten/go-windows-terminal-sequences
+  version: 5c8c8bd35d3832f5d134ae1e1e375b69a4d25242
 - name: github.com/kr/pretty
   version: 73f6ac0b30a98e433b289500d779f50c1a6f0712
 - name: github.com/kr/text
   version: e2ffdb16a802fe2bb95e2e35ff34f0e53aeef34f
+- name: github.com/Microsoft/go-winio
+  version: 97e4973ce50b2ff5f09635a57e2b88a037aae829
+- name: github.com/Nvveen/Gotty
+  version: cd527374f1e5bff4938207604a14f2e38a9cf512
+- name: github.com/opencontainers/go-digest
+  version: c9281466c8b2f606084ac71339773efd177436e7
+- name: github.com/opencontainers/image-spec
+  version: b6e51fa50549ee0bd5188494912a7f4c382cb0d4
+  subpackages:
+  - specs-go
+  - specs-go/v1
+- name: github.com/opencontainers/runc
+  version: f3ce8221ea760f51b5403a9892a69ace43845c2c
+  subpackages:
+  - libcontainer/user
+- name: github.com/pkg/errors
+  version: 059132a15dd08d6704c67711dae0cf35ab991756
+- name: github.com/sirupsen/logrus
+  version: 4fabf2fffcecfd47f802869b7b92d75e43c5a095
+- name: golang.org/x/crypto
+  version: e84da0312774c21d64ee2317962ef669b27ffb41
+  subpackages:
+  - ssh/terminal
+- name: golang.org/x/sys
+  version: 95b1ffbd15a57cc5abb3f04402b9e8ec0016a52c
+  subpackages:
+  - unix
+  - windows
