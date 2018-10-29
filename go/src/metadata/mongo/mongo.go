@@ -48,6 +48,16 @@ func (s *Mongo) Delete(ctx context.Context, imgMeta *models.ImageMeta) error {
 	}
 	c := s.Conn.DB(dbName).C(collName)
 
+	store := metadata.StoreClient()
+	delImg := &operations.DeleteImageDataParams{
+		Context:   ctx,
+		ImageItem: imgMeta,
+	}
+	_, err = store.Operations.DeleteImageData(delImg)
+	if err != nil {
+		return err
+	}
+
 	return c.Remove(*imgMeta)
 }
 
