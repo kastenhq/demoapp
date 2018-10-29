@@ -22,7 +22,7 @@ basePath: /v0
 # items
 definitions:
   Image:
-    description: "Image is an objects represents image in galerry"
+    description: "Image is an object representing an image in gallery"
     properties:
       meta:
         $ref: '#/definitions/ImageMeta'
