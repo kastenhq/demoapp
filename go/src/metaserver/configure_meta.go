@@ -2,15 +2,21 @@ package metaserver
 
 import (
 	"crypto/tls"
+	"fmt"
+	"log"
 	"models"
 	"net/http"
+	"os"
 
 	errors "github.com/go-openapi/errors"
 	runtime "github.com/go-openapi/runtime"
 	middleware "github.com/go-openapi/runtime/middleware"
 	graceful "github.com/tylerb/graceful"
 
+	"metadata"
+	"metadata/mongo"
 	"metaserver/operations"
+	"models"
 )
 
 // This file is safe to edit. Once it exists it will not be overwritten
@@ -35,12 +41,35 @@ func configureAPI(api *operations.MetaAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
+	var metadata metadata.MetaDater
+
+	if mHost, ok := os.LookupEnv(mongo.HOSTENV); ok {
+		mPass := os.Getenv(mongo.PASSWORDENV)
+		mUser := os.Getenv(mongo.USERNAMEENV)
+		mDBUrl := fmt.Sprintf("mongodb://%s:%s@%s:27017", mUser, mPass, mHost)
+		metadata = &mongo.Mongo{DBurl: mDBUrl}
+	} else {
+		panic("Unsupported metadata provider type")
+	}
+
 	api.AddImageHandler = operations.AddImageHandlerFunc(func(params operations.AddImageParams) middleware.Responder {
-		return middleware.NotImplemented("operation .AddImage has not yet been implemented")
+		rImg, err := metadata.Add(params.HTTPRequest.Context(), params.ImageItem.Base64)
+		if err != nil {
+			log.Printf("Failed to add new Image meatdata with err %s", err.Error())
+			return operations.NewAddImageDefault(500).WithPayload(&models.ErrorDetail{Message: "Failed to add new image " + err.Error()})
+		}
+		return operations.NewAddImageCreated().WithPayload(rImg)
 	})
+
 	api.DeleteImageHandler = operations.DeleteImageHandlerFunc(func(params operations.DeleteImageParams) middleware.Responder {
-		return middleware.NotImplemented("operation .DeleteImage has not yet been implemented")
+		err := metadata.Delete(params.HTTPRequest.Context(), &models.ImageMeta{ID: params.ItemID})
+		if err != nil {
+			log.Printf("Failed to delete Image with err %s", err.Error())
+			return operations.NewDeleteImageDefault(500).WithPayload(&models.ErrorDetail{Message: "Failed to delete image " + err.Error()})
+		}
+		return operations.NewDeleteImageOK()
 	})
+
 	api.GetImageHandler = operations.GetImageHandlerFunc(func(params operations.GetImageParams) middleware.Responder {
 		return middleware.NotImplemented("operation .GetImage has not yet been implemented")
 	})
@@ -49,8 +78,13 @@ func configureAPI(api *operations.MetaAPI) http.Handler {
 	api.HealthzHandler = operations.HealthzHandlerFunc(func(params operations.HealthzParams) middleware.Responder {
 		return healthzOK
 	})
+
 	api.ListImagesHandler = operations.ListImagesHandlerFunc(func(params operations.ListImagesParams) middleware.Responder {
-		return middleware.NotImplemented("operation .ListImages has not yet been implemented")
+		imgs, err := metadata.GetAllImages(params.HTTPRequest.Context())
+		if err != nil {
+			return operations.NewListImagesDefault(500).WithPayload(&models.ErrorDetail{Message: "Failed to list images " + err.Error()})
+		}
+		return operations.NewListImagesOK().WithPayload(imgs)
 	})
 
 	api.ServerShutdown = func() {}
