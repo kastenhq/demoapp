@@ -1,5 +1,5 @@
 hash: 07bb9d00268c4791a4868ffd37c014cb90ab6c8b65276b8945ba072123e7bddd
-updated: 2018-10-26T15:02:36.843929733-07:00
+updated: 2018-10-29T10:04:09.015681968-07:00
 imports:
 - name: github.com/asaskevich/govalidator
   version: f9ffefc3facfbe0caee3fea233cbb6e8208f4541
@@ -43,7 +43,7 @@ imports:
 - name: github.com/golang/groupcache
   version: 02826c3e79038b59d737d3b1c0a1d937f71a4433
 - name: github.com/jessevdk/go-flags
-  version: 9c49a3351d49777ccd40148b5cdf6f2998f51087
+  version: 5de817a9aa209ed35a164cb04aec82b7df1a47a6
 - name: github.com/mailru/easyjson
   version: 60711f1a8329503b04e1c88535f419d0bb440bff
   subpackages:
@@ -88,7 +88,7 @@ imports:
 - name: github.com/tylerb/graceful
   version: d72b0151351a13d0421b763b88f791469c4f5dc7
 - name: golang.org/x/net
-  version: 9b4f9f5ad5197c79fd623a3638e70d8b26cef344
+  version: c44066c5c816ec500d459a2a324a753f78531ae0
   subpackages:
   - context
   - context/ctxhttp
@@ -118,7 +118,7 @@ testImports:
 - name: github.com/cenkalti/backoff
   version: 62661b46c4093e2c1f38d943e663db1a29873e80
 - name: github.com/containerd/continuity
-  version: c220ac4f01b8a301edcb9c9c05d7600249138cfa
+  version: bea7585dbfac2847dbf49a6b8e7738a36c09bc75
   subpackages:
   - pathdriver
 - name: github.com/docker/go-connections
@@ -138,7 +138,7 @@ testImports:
 - name: github.com/opencontainers/go-digest
   version: c9281466c8b2f606084ac71339773efd177436e7
 - name: github.com/opencontainers/image-spec
-  version: b6e51fa50549ee0bd5188494912a7f4c382cb0d4
+  version: 09950c5fb1bb6745e72aa26ecde0d540e35f5286
   subpackages:
   - specs-go
   - specs-go/v1
@@ -149,9 +149,9 @@ testImports:
 - name: github.com/pkg/errors
   version: 059132a15dd08d6704c67711dae0cf35ab991756
 - name: github.com/sirupsen/logrus
-  version: 4fabf2fffcecfd47f802869b7b92d75e43c5a095
+  version: 566a5f690849162ff53cf98f3c42135389d63f95
 - name: golang.org/x/crypto
-  version: e84da0312774c21d64ee2317962ef669b27ffb41
+  version: dab2b1051b5dd33a57e97c4774ed152e6a6c9a13
   subpackages:
   - ssh/terminal
 - name: golang.org/x/sys

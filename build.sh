@@ -35,12 +35,12 @@ GOPATH=${BASE}/go swagger generate server --spec=${BASE}/swagger.yaml \
             --operation=getImage \
             --operation=deleteImage
 
-GOPATH=${BASE}/go glide update -v
-
-GOPATH=${BASE}/go go test -v ./... -check.vv
+GOPATH=${BASE}/go glide install --strip-vendor
 
 GOPATH=${BASE}/go CGO_ENABLED=0 GO_EXTLINK_ENABLED=0 go install -v  ./...
 popd
 
 BIN=store-server envsubst < build/templates/Dockerfile | docker build -t store-server go/bin -f -
 BIN=meta-server envsubst < build/templates/Dockerfile | docker build -t meta-server go/bin -f -
+
+GOPATH=${BASE}/go go test -v ./... -check.vv
