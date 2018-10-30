@@ -2,7 +2,6 @@ package storeserver
 
 import (
 	"crypto/tls"
-	"log"
 	"models"
 	"net/http"
 	"os"
@@ -10,6 +9,7 @@ import (
 	errors "github.com/go-openapi/errors"
 	runtime "github.com/go-openapi/runtime"
 	middleware "github.com/go-openapi/runtime/middleware"
+	log "github.com/sirupsen/logrus"
 	graceful "github.com/tylerb/graceful"
 
 	"store"
@@ -43,16 +43,16 @@ func configureAPI(api *operations.StoreAPI) http.Handler {
 
 	if lpath, ok := os.LookupEnv(localHDDPAthEnvName); ok {
 		storer = &local.HDD{StorePath: lpath}
-		log.Printf("Configured to use local HDD with path %s", lpath)
+		log.Infof("Configured to use local HDD with path %s", lpath)
 	} else {
 		storer = &local.HDD{StorePath: os.TempDir()}
-		log.Printf("Configured to use local HDD with TMP path %s", os.TempDir())
+		log.Infof("Configured to use local HDD with TMP path %s", os.TempDir())
 	}
 
 	api.DeleteImageDataHandler = operations.DeleteImageDataHandlerFunc(func(params operations.DeleteImageDataParams) middleware.Responder {
 		err := storer.Delete(params.HTTPRequest.Context(), params.ImageItem)
 		if err != nil {
-			log.Printf("Failed to delete image " + err.Error())
+			log.Errorf("Failed to delete image " + err.Error())
 			return operations.NewGetImageDataDefault(500).WithPayload(&models.ErrorDetail{Message: "Failed to delete image " + err.Error()})
 		}
 		return operations.NewDeleteImageDataOK()
@@ -61,10 +61,19 @@ func configureAPI(api *operations.StoreAPI) http.Handler {
 	api.GetImageDataHandler = operations.GetImageDataHandlerFunc(func(params operations.GetImageDataParams) middleware.Responder {
 		imgData, err := storer.Read(params.HTTPRequest.Context(), params.ImageItem)
 		if err != nil {
-			log.Printf("Failed to get image " + err.Error())
+			log.Errorf("Failed to get image " + err.Error())
 			return operations.NewGetImageDataDefault(500).WithPayload(&models.ErrorDetail{Message: "Failed to get image " + err.Error()})
 		}
 		return operations.NewGetImageDataOK().WithPayload(imgData)
+	})
+
+	api.StoreImageDataHandler = operations.StoreImageDataHandlerFunc(func(params operations.StoreImageDataParams) middleware.Responder {
+		img, err := storer.Write(params.HTTPRequest.Context(), params.ImageItem)
+		if err != nil {
+			log.Errorf("Failed to store image " + err.Error())
+			return operations.NewGetImageDataDefault(500).WithPayload(&models.ErrorDetail{Message: "Failed to get image " + err.Error()})
+		}
+		return operations.NewStoreImageDataCreated().WithPayload(img)
 	})
 
 	healthzOK := operations.NewHealthzOK().WithPayload(&models.ServiceInfo{Version: "0.0.1"})

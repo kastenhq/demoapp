@@ -220,6 +220,27 @@ paths:
           $ref: '#/responses/GeneralError'
   /store:
     parameters: *DEFAULT_PARAMS
+    post:
+      summary: "Stores image"
+      operationId: storeImageData
+      description: "Stores image to storage provider"
+      parameters:
+      - in: body
+        name: imageItem
+        description: "Image to add"
+        schema:
+          $ref: '#/definitions/Image'
+      responses:
+        201:
+          $ref: '#/responses/ImageResponse'
+        400:
+          # Invalid input artifact definition
+          $ref: '#/responses/GeneralError'
+        409:
+          # The specified artifact already exists
+          $ref: '#/responses/GeneralError'
+        default:
+          $ref: '#/responses/GeneralError'
     get:
       summary: "Gets image data"
       operationId: getImageData

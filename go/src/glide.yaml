@@ -26,3 +26,7 @@ import:
   version: v1.2.0
 - package: gopkg.in/check.v1
   version: v1
+- package: github.com/globalsign/mgo
+  version: r2018.06.15
+- package: github.com/ory/dockertest
+  version: v3.3.2
