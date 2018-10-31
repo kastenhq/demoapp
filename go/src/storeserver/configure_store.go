@@ -68,10 +68,11 @@ func configureAPI(api *operations.StoreAPI) http.Handler {
 	})
 
 	api.StoreImageDataHandler = operations.StoreImageDataHandlerFunc(func(params operations.StoreImageDataParams) middleware.Responder {
+		log.Infof("Store image image params %+v", params.ImageItem)
 		img, err := storer.Write(params.HTTPRequest.Context(), params.ImageItem)
 		if err != nil {
 			log.Errorf("Failed to store image " + err.Error())
-			return operations.NewGetImageDataDefault(500).WithPayload(&models.ErrorDetail{Message: "Failed to get image " + err.Error()})
+			return operations.NewGetImageDataDefault(500).WithPayload(&models.ErrorDetail{Message: "Failed to store image " + err.Error()})
 		}
 		return operations.NewStoreImageDataCreated().WithPayload(img)
 	})

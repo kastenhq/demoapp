@@ -16,8 +16,8 @@ import (
 )
 
 const (
-	testImage     = "testimage/logo.png"
-	testImageName = "logo.png"
+	testImage     = "testimage/small.jpg"
+	testImageName = "small.jpg"
 )
 
 type LocalStoreSuite struct {
@@ -56,6 +56,9 @@ func (s *LocalStoreSuite) TestALocalWrite(c *C) {
 	img, err := s.storer.Write(context.TODO(), &s.testImage)
 	c.Assert(err, IsNil)
 	c.Assert(img.Meta.Location, Equals, s.testImage.Meta.Location)
+	bImg, err := ioutil.ReadFile(img.Meta.Location)
+	c.Assert(err, IsNil)
+	c.Assert(string(bImg), Equals, string(s.testImage.Base64))
 }
 func (s *LocalStoreSuite) TestBLocalRead(c *C) {
 	img, err := s.storer.Read(context.TODO(), s.testImage.Meta)

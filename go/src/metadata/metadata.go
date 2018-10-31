@@ -16,7 +16,7 @@ import (
 const (
 	// StoreServiceAddrEnv allows to specify store service
 	StoreServiceAddrEnv = "STORE-IP"
-	port                = "8080"
+	port                = "8000"
 )
 
 // MetaDater interface to deal with metadata
