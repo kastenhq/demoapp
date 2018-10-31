@@ -1,0 +1,24 @@
+{{- $container_port := .Values.service.internalPort -}}
+{{- $service_port := .Values.service.externalPort -}}
+{{- range $service := include "demoapp.services" . | splitList " "  }}
+{{- with $ -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $service }}
+  labels:
+{{ include "demoapp.labels" . | indent 4 }}
+  component: {{ $service }}
+  run: {{ $service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+  - name: http
+    protocol: TCP
+    port: {{ $service_port }}
+    targetPort: {{ $container_port }}
+  selector:
+    run: {{ $service }}
+---
+{{- end -}}
+{{- end }}

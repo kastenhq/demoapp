@@ -1,0 +1,90 @@
+{{- range $service := include "demoapp.services" . | splitList " "  }}
+{{- with $ -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $service }}
+  labels:
+{{ include "demoapp.labels" . | indent 4 }}
+spec:
+  selector:
+    matchLabels:
+{{ include "demoapp.labels" . | indent 6 }}
+      component: {{ $service }}
+      run: {{ $service }}
+  template:
+    metadata:
+      labels:
+{{ include "demoapp.labels" . | indent 8 }}
+        component: {{ $service }}
+        run: {{ $service }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}{{ $service }}-server:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.internalPort}}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /v0/healthz
+              port: http
+            initialDelaySeconds: 90
+            timeoutSeconds: 1
+          readinessProbe:
+            httpGet:
+              path: /v0/healthz
+              port: http
+            initialDelaySeconds: 10
+            timeoutSeconds: 1
+          env:
+{{ if eq $service "metadata" }}
+            - name: MONGO-USERNAME
+              value: {{ .Values.mongodb.mongodbUsername }}
+            - name: MONGO-PASSWORD
+              value: {{ .Values.mongodb.mongodbPassword }}
+            - name: MONGO-HOSTNAME
+              value: {{ .Release.Name }}-mongodb
+{{ end }}
+{{ if eq $service "store" }}
+            - name: LOCAL_STORE_PATH
+              value: "/var/img-store"
+          volumeMounts:
+            - name: {{ $service }}-persistent-storage
+              mountPath: "/var/img-store"
+        - name: debug
+          image: busybox
+          command: ['sh', '-c', 'echo The app is running! && sleep 3600']
+          volumeMounts:
+            - name: {{ $service }}-persistent-storage
+              mountPath: "/var/img-store"
+      volumes:
+          - name: {{ $service }}-persistent-storage
+            persistentVolumeClaim:
+              claimName: {{ $service }}-pv-claim
+{{ end }}
+---
+{{ if eq $service "store" }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ $service }}-pv-claim
+  labels:
+{{ include "demoapp.labels" . | indent 4 }}
+    component: {{ $service }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ default .Values.persistence.size }}
+{{- if .Values.persistence.storageClass }}
+  storageClassName: {{ .Values.persistence.storageClass }}
+{{- end }}
+---
+{{ end }}
+{{- end -}}
+{{- end }}
