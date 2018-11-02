@@ -1,3 +1,1 @@
-{{- define "demoapp.services" -}}metadata store {{- end -}}
-
-
+{{- define "demoapp.services" -}}metadata store frontend {{- end -}}

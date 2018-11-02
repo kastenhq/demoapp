@@ -16,7 +16,7 @@ spec:
   - name: http
     protocol: TCP
     port: {{ $service_port }}
-    targetPort: {{ $container_port }}
+    targetPort: http
   selector:
     run: {{ $service }}
 ---

@@ -25,7 +25,11 @@ spec:
   - http:
       paths:
       {{ range include "demoapp.services" . | splitList " " }}
+      {{ if eq . "frontend" }}
+        - path: /{{ $.Release.Name }}/
+      {{ else }}
         - path: /{{ $.Release.Name }}/{{ . }}
+      {{ end }}
           backend:
             serviceName: {{ . }}
             servicePort: http

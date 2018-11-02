@@ -2,6 +2,7 @@ package metaserver
 
 import (
 	"crypto/tls"
+	"encoding/base64"
 	"fmt"
 	"net/http"
 	"os"
@@ -71,7 +72,13 @@ func configureAPI(api *operations.MetaAPI) http.Handler {
 	})
 
 	api.GetImageHandler = operations.GetImageHandlerFunc(func(params operations.GetImageParams) middleware.Responder {
-		return middleware.NotImplemented("operation .GetImage has not yet been implemented")
+		rImg, err := metadata.FetchImage(params.HTTPRequest.Context(), params.ItemID)
+		if err != nil {
+			log.Errorf("Failed to fetch Image with err %s", err.Error())
+			return operations.NewGetImageDefault(500).WithPayload(&models.ErrorDetail{Message: "Failed to fetch image " + err.Error()})
+		}
+		ret, _ := base64.StdEncoding.DecodeString(string(rImg))
+		return operations.NewGetImageOK().WithPayload(ret)
 	})
 
 	healthzOK := operations.NewHealthzOK().WithPayload(&models.ServiceInfo{Version: "0.0.1"})

@@ -47,6 +47,10 @@ definitions:
         type: string
         description: "Image path"
         example: "s3://bucket/foo/pic1.jpg"
+  ImageBin:
+    type: string
+    format: byte
+    description: "ImageBinary"
   ImageData:
     type: string
     description: "Base64 encoded image"
@@ -110,6 +114,10 @@ responses:
     description: "Response for imageData requests"
     schema:
       $ref: '#/definitions/ImageData'
+  ImageBinResponce:
+    description: "Response for fetch image requests"
+    schema:
+      $ref: '#/definitions/ImageBin'
   HealthResponse:
     description: "Response for a health check requestt"
     schema:
@@ -190,7 +198,7 @@ paths:
         - $ref: '#/parameters/ItemIdParam'
       responses:
         200:
-          $ref: '#/responses/ImageResponse'
+          $ref: '#/responses/ImageBinResponce'
         400:
           # Invalid image id
           $ref: '#/responses/GeneralError'

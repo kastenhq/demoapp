@@ -25,8 +25,13 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
+{{ if eq $service "frontend" }}
+              containerPort: 80
+{{ else }}
               containerPort: {{ .Values.service.internalPort}}
+{{ end }}
               protocol: TCP
+{{ if not (eq $service "frontend") }}
           livenessProbe:
             httpGet:
               path: /v0/healthz
@@ -39,6 +44,7 @@ spec:
               port: http
             initialDelaySeconds: 10
             timeoutSeconds: 1
+{{ end }}
           env:
 {{ if eq $service "metadata" }}
             - name: MONGO-USERNAME

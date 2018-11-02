@@ -47,7 +47,7 @@ func (s *MongoMetaDataSuite) SetUpSuite(c *C) {
 		Base64: models.ImageData(base64.StdEncoding.EncodeToString(fbuf)),
 	}
 
-	dOpts := &dockertest.RunOptions{
+	/*dOpts := &dockertest.RunOptions{
 		Repository:   "bitnami/mongodb",
 		Tag:          "3.6",
 		Env:          []string{"MONGODB_DATABASE=images", "MONGODB_USERNAME=testuser", "MONGODB_PASSWORD=testpassword"},
@@ -68,7 +68,7 @@ func (s *MongoMetaDataSuite) SetUpSuite(c *C) {
 	}); err != nil {
 		c.Errorf("Failed to connect to mongo %s", err.Error())
 	}
-
+	*/
 	s.db = Mongo{DBurl: "mongodb://testuser:testpassword@localhost:27017/?authSource=images&authMechanism=SCRAM-SHA-1"}
 	s.startStore(c)
 	os.Setenv(metadata.StoreServiceAddrEnv, "localhost")
@@ -77,6 +77,7 @@ func (s *MongoMetaDataSuite) SetUpSuite(c *C) {
 }
 
 func (s *MongoMetaDataSuite) TearDownSuite(c *C) {
+	c.Skip("test")
 	s.db.Conn.Close()
 	err := s.mongoDRes.Close()
 	c.Assert(err, IsNil)
@@ -120,6 +121,16 @@ func (s *MongoMetaDataSuite) TestDelete(c *C) {
 	imgs, err := s.db.GetAllImages(context.Background())
 	c.Assert(err, IsNil)
 	err = s.db.Delete(context.Background(), imgs[0])
+}
+
+func (s *MongoMetaDataSuite) TestFetch(c *C) {
+	err := s.db.Ping()
+	c.Assert(err, IsNil)
+	timg, err := s.db.Add(context.Background(), s.testImage.Base64)
+	c.Assert(err, IsNil)
+	fimg, err := s.db.FetchImage(context.Background(), timg.Meta.ID)
+	c.Assert(err, IsNil)
+	c.Assert(fimg, Equals, s.testImage.Base64)
 }
 
 func (s *MongoMetaDataSuite) startStore(c *C) {
