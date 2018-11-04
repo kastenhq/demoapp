@@ -14,8 +14,8 @@ import (
 )
 
 // Middleware returns an http.Handler that uses OpenTracing to trace
-// requests that go through it.
 func Middleware(next http.Handler) http.Handler {
+	// requests that go through it.
 	return nethttp.Middleware(opentracing.GlobalTracer(),
 		next,
 		nethttp.OperationNameFunc(func(r *http.Request) string {
