@@ -34,4 +34,10 @@ spec:
             serviceName: {{ . }}
             servicePort: http
       {{ end }}
+      {{ if .Values.jaeger.enabled }}
+        - path: /{{ .Release.Name }}/jaeger
+          backend:
+            serviceName: {{ .Release.Name }}-jaeger-query
+            servicePort: http
+      {{ end }}
 {{- end -}}

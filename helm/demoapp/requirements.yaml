@@ -8,4 +8,8 @@ dependencies:
   repository: https://kubernetes-charts.storage.googleapis.com
   alias: nginx
   condition: nginx.enabled
+- name: jaeger-all-in-one
+  version: 0.1.0
+  alias: jaeger
+  condition: jaeger.enabled
 

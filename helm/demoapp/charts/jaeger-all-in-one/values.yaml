@@ -1,56 +1,26 @@
-# Default values for demoapp.
+# Default values for jaeger-all-in-one.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-image:
-  repository: depohmel/demoapp-
-  tag: alltracing
-  pullPolicy: Always
+replicaCount: 1
 
-nameOverride: ""
-fullnameOverride: ""
+image:
+  repository: jaegertracing/all-in-one
+  tag: latest
+  pullPolicy: IfNotPresent
 
 service:
-  type: "ClusterIP"
-  internalPort: 8000
-  externalPort: 8000
-
-persistence:
-  enables: true
-  size: 2Gi
-
-mongodb:
-  enabled: true
-  mongodbUsername: someuser
-  mongodbPassword: somepass
-  mongodbDatabase: images
-  persistence:
-    enabled: false
-  image:
-    tag: "3.6"
-
-jaeger:
-  enabled: false
-  agentDNS: demoapp-w-t-jaeger-agent.demoapp-w-t.svc.cluster.local
-
-nginx:
-  enabled: false
-  rbac:
-      create: true
-  controller:
-    ingressClass: demoapp-nginx-ingress
-    service:
-      type: NodePort
-    scope:
-      enabled: true
-    extraArgs:
-      v: 2
+  type: ClusterIP
+  port: 80
 
 ingress:
-  enabled: true
+  enabled: false
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
+  path: /
+  hosts:
+    - chart-example.local
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
