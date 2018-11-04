@@ -47,16 +47,15 @@ func (s *MongoMetaDataSuite) SetUpSuite(c *C) {
 		Base64: models.ImageData(base64.StdEncoding.EncodeToString(fbuf)),
 	}
 
-	dOpts := &dockertest.RunOptions{
-		Repository:   "mongo",
-		Tag:          "3.4",
-		Env:          []string{"MONGO_INITDB_ROOT_USERNAME=test", "MONGO_INITDB_ROOT_PASSWORD=test"},
+	/*dOpts := &dockertest.RunOptions{
+		Repository:   "bitnami/mongodb",
+		Tag:          "3.6",
+		Env:          []string{"MONGODB_DATABASE=images", "MONGODB_USERNAME=testuser", "MONGODB_PASSWORD=testpassword"},
 		PortBindings: map[dc.Port][]dc.PortBinding{"27017/tcp": {{HostPort: "27017"}}},
 	}
 
 	pool, err := dockertest.NewPool("")
 	c.Assert(err, IsNil)
-
 	s.mongoDRes, err = pool.RunWithOptions(dOpts)
 	c.Assert(err, IsNil)
 	if err := pool.Retry(func() error {
@@ -69,13 +68,16 @@ func (s *MongoMetaDataSuite) SetUpSuite(c *C) {
 	}); err != nil {
 		c.Errorf("Failed to connect to mongo %s", err.Error())
 	}
-
-	s.db = Mongo{DBurl: "mongodb://test:test@localhost:27017"}
+	*/
+	s.db = Mongo{DBurl: "mongodb://testuser:testpassword@localhost:27017/?authSource=images&authMechanism=SCRAM-SHA-1"}
 	s.startStore(c)
 	os.Setenv(metadata.StoreServiceAddrEnv, "localhost")
+	// bitnami mongo is slow :(
+	time.Sleep(time.Second * 10)
 }
 
 func (s *MongoMetaDataSuite) TearDownSuite(c *C) {
+	c.Skip("test")
 	s.db.Conn.Close()
 	err := s.mongoDRes.Close()
 	c.Assert(err, IsNil)
@@ -121,11 +123,21 @@ func (s *MongoMetaDataSuite) TestDelete(c *C) {
 	err = s.db.Delete(context.Background(), imgs[0])
 }
 
+func (s *MongoMetaDataSuite) TestFetch(c *C) {
+	err := s.db.Ping()
+	c.Assert(err, IsNil)
+	timg, err := s.db.Add(context.Background(), s.testImage.Base64)
+	c.Assert(err, IsNil)
+	fimg, err := s.db.FetchImage(context.Background(), timg.Meta.ID)
+	c.Assert(err, IsNil)
+	c.Assert(fimg, Equals, s.testImage.Base64)
+}
+
 func (s *MongoMetaDataSuite) startStore(c *C) {
 	dOpts := &dockertest.RunOptions{
 		Repository:   "store-server",
 		Tag:          "latest",
-		PortBindings: map[dc.Port][]dc.PortBinding{"8080/tcp": {{HostPort: "8080"}}},
+		PortBindings: map[dc.Port][]dc.PortBinding{"8000/tcp": {{HostPort: "8000"}}},
 	}
 
 	pool, err := dockertest.NewPool("")
@@ -134,7 +146,7 @@ func (s *MongoMetaDataSuite) startStore(c *C) {
 	s.storeDRes, err = pool.RunWithOptions(dOpts)
 	c.Assert(err, IsNil)
 	if err := pool.Retry(func() error {
-		_, err := net.DialTimeout("tcp", net.JoinHostPort("", "8080"), time.Second*5)
+		_, err := net.DialTimeout("tcp", net.JoinHostPort("", "8000"), time.Second*5)
 		if err != nil {
 			c.Logf("Failed to dial store server:", err)
 			return err

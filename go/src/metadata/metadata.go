@@ -16,14 +16,15 @@ import (
 const (
 	// StoreServiceAddrEnv allows to specify store service
 	StoreServiceAddrEnv = "STORE-IP"
-	port                = "8080"
+	port                = "8000"
 )
 
 // MetaDater interface to deal with metadata
 // English language: metadata + er = thing which handels metadata
 type MetaDater interface {
 	GetAllImages(context.Context) (models.ImageList, error)
-	FindImages(context.Context, map[string]string) (models.ImageList, error)
+	FetchImage(context.Context, strfmt.UUID) (models.ImageData, error)
+	FindImages(context.Context, map[string]interface{}) (models.ImageList, error)
 	Delete(context.Context, *models.ImageMeta) error
 	Add(context.Context, models.ImageData) (*models.Image, error)
 }

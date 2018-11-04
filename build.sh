@@ -41,6 +41,7 @@ GOPATH=${BASE}/go CGO_ENABLED=0 GO_EXTLINK_ENABLED=0 go install -v  ./...
 popd
 
 BIN=store-server envsubst < build/templates/Dockerfile | docker build -t store-server go/bin -f -
-BIN=meta-server envsubst < build/templates/Dockerfile | docker build -t meta-server go/bin -f -
+BIN=meta-server envsubst < build/templates/Dockerfile | docker build -t metadata-server go/bin -f -
+docker build -t frontend-server frontend -f frontend/Dockerfile
 
 GOPATH=${BASE}/go go test -v ./... -check.vv

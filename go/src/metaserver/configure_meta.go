@@ -2,6 +2,7 @@ package metaserver
 
 import (
 	"crypto/tls"
+	"encoding/base64"
 	"fmt"
 	"net/http"
 	"os"
@@ -45,7 +46,7 @@ func configureAPI(api *operations.MetaAPI) http.Handler {
 	if mHost, ok := os.LookupEnv(mongo.HOSTENV); ok {
 		mPass := os.Getenv(mongo.PASSWORDENV)
 		mUser := os.Getenv(mongo.USERNAMEENV)
-		mDBUrl := fmt.Sprintf("mongodb://%s:%s@%s:27017", mUser, mPass, mHost)
+		mDBUrl := fmt.Sprintf("mongodb://%s:%s@%s:27017/?authSource=images&authMechanism=SCRAM-SHA-1", mUser, mPass, mHost)
 		metadata = &mongo.Mongo{DBurl: mDBUrl}
 	} else {
 		log.Panic("Unsupported metadata provider type")
@@ -53,6 +54,7 @@ func configureAPI(api *operations.MetaAPI) http.Handler {
 
 	api.AddImageHandler = operations.AddImageHandlerFunc(func(params operations.AddImageParams) middleware.Responder {
 		rImg, err := metadata.Add(params.HTTPRequest.Context(), params.ImageItem.Base64)
+		log.Infof("Add image params %+v", params.ImageItem)
 		if err != nil {
 			log.Errorf("Failed to add new Image meatdata with err %s", err.Error())
 			return operations.NewAddImageDefault(500).WithPayload(&models.ErrorDetail{Message: "Failed to add new image " + err.Error()})
@@ -70,7 +72,13 @@ func configureAPI(api *operations.MetaAPI) http.Handler {
 	})
 
 	api.GetImageHandler = operations.GetImageHandlerFunc(func(params operations.GetImageParams) middleware.Responder {
-		return middleware.NotImplemented("operation .GetImage has not yet been implemented")
+		rImg, err := metadata.FetchImage(params.HTTPRequest.Context(), params.ItemID)
+		if err != nil {
+			log.Errorf("Failed to fetch Image with err %s", err.Error())
+			return operations.NewGetImageDefault(500).WithPayload(&models.ErrorDetail{Message: "Failed to fetch image " + err.Error()})
+		}
+		ret, _ := base64.StdEncoding.DecodeString(string(rImg))
+		return operations.NewGetImageOK().WithPayload(ret)
 	})
 
 	healthzOK := operations.NewHealthzOK().WithPayload(&models.ServiceInfo{Version: "0.0.1"})

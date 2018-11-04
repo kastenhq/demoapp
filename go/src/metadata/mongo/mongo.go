@@ -3,8 +3,10 @@ package mongo
 import (
 	"context"
 	"errors"
+	"log"
 
 	"github.com/globalsign/mgo"
+	"github.com/go-openapi/strfmt"
 
 	"metadata"
 	"models"
@@ -35,9 +37,39 @@ func (s *Mongo) GetAllImages(ctx context.Context) (models.ImageList, error) {
 	return imgs, c.Find(nil).All(&imgs)
 }
 
+// FetchImage searches thru metadata and fetchs image data from store
+func (s *Mongo) FetchImage(ctx context.Context, id strfmt.UUID) (models.ImageData, error) {
+	imgs, err := s.FindImages(ctx, map[string]interface{}{"id": id})
+	if err != nil {
+		return "", err
+	}
+	log.Printf("Images %+v", imgs)
+	if len(imgs) != 1 {
+		return "", errors.New("Found multiple or none images for the same ID")
+	}
+	store := metadata.StoreClient()
+	getImg := &operations.GetImageDataParams{
+		Context:   ctx,
+		ImageItem: imgs[0],
+	}
+	imgData, err := store.Operations.GetImageData(getImg)
+	if err != nil {
+		return "", err
+	}
+	return imgData.Payload, nil
+}
+
 // FindImages performs a select and returns list of images
-func (s *Mongo) FindImages(ctx context.Context, tags map[string]string) (models.ImageList, error) {
-	return models.ImageList{}, nil
+func (s *Mongo) FindImages(ctx context.Context, tags map[string]interface{}) (models.ImageList, error) {
+	err := s.Ping()
+	if err != nil {
+		return models.ImageList{}, err
+	}
+	c := s.Conn.DB(dbName).C(collName)
+	imgs := models.ImageList{}
+	err = c.Find(tags).All(&imgs)
+	log.Printf("Found for search %+v", imgs)
+	return imgs, err
 }
 
 // Delete removes meta data for porvided imagemeta
