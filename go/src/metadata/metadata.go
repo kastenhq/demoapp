@@ -11,6 +11,7 @@ import (
 
 	"models"
 	"restclient"
+	"transport"
 )
 
 const (
@@ -38,7 +39,7 @@ func StoreClient() *restclient.Rest {
 
 	host := fmt.Sprintf("%s:%s", storeAddr, port)
 	cfg := restclient.DefaultTransportConfig().WithHost(host)
-	httpClient := &http.Client{Transport: http.DefaultTransport}
+	httpClient := &http.Client{Transport: transport.NewTracingTransport(http.DefaultTransport)}
 	ct := client.NewWithClient(cfg.Host, cfg.BasePath, cfg.Schemes, httpClient)
 	return restclient.New(ct, strfmt.Default)
 }
