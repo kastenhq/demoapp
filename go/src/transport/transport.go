@@ -19,9 +19,11 @@ func (t *tracingTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 	defer span.Finish()
 	span.SetTag(string(ext.SpanKind), ext.SpanKindRPCServerEnum)
 	span.SetTag(string(ext.HTTPMethod), r.Method)
-	span.SetTag(string(ext.HTTPUrl), r.URL)
+	span.SetTag(string(ext.HTTPUrl), r.URL.String())
 
 	r.WithContext(ctx2)
+	carrier := opentracing.HTTPHeadersCarrier(r.Header)
+	span.Tracer().Inject(span.Context(), opentracing.HTTPHeaders, carrier)
 
 	resp, err := t.transport.RoundTrip(r)
 
