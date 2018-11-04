@@ -6,6 +6,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{ $fullName }}
+  namespace: {{ default .Release.Namespace .Values.namespace }}
   labels:
     app: {{ template "jaeger-all-in-one.name" . }}
     chart: {{ template "jaeger-all-in-one.chart" . }}

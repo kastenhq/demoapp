@@ -47,7 +47,7 @@ spec:
 {{ end }}
           env:
             - name: JAEGER_AGENT_HOST
-              value: jaeger-all-in-one-agent.kube-system.svc.cluster.local
+              value: {{ .Release.Name }}-jaeger-agent.kube-system.svc.cluster.local
 {{ if eq $service "metadata" }}
             - name: MONGO-USERNAME
               value: {{ .Values.mongodb.mongodbUsername }}
