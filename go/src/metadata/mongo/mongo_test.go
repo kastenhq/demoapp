@@ -47,7 +47,7 @@ func (s *MongoMetaDataSuite) SetUpSuite(c *C) {
 		Base64: models.ImageData(base64.StdEncoding.EncodeToString(fbuf)),
 	}
 
-	/*dOpts := &dockertest.RunOptions{
+	dOpts := &dockertest.RunOptions{
 		Repository:   "bitnami/mongodb",
 		Tag:          "3.6",
 		Env:          []string{"MONGODB_DATABASE=images", "MONGODB_USERNAME=testuser", "MONGODB_PASSWORD=testpassword"},
@@ -68,7 +68,7 @@ func (s *MongoMetaDataSuite) SetUpSuite(c *C) {
 	}); err != nil {
 		c.Errorf("Failed to connect to mongo %s", err.Error())
 	}
-	*/
+
 	s.db = Mongo{DBurl: "mongodb://testuser:testpassword@localhost:27017/?authSource=images&authMechanism=SCRAM-SHA-1"}
 	s.startStore(c)
 	os.Setenv(metadata.StoreServiceAddrEnv, "localhost")
@@ -77,7 +77,6 @@ func (s *MongoMetaDataSuite) SetUpSuite(c *C) {
 }
 
 func (s *MongoMetaDataSuite) TearDownSuite(c *C) {
-	c.Skip("test")
 	s.db.Conn.Close()
 	err := s.mongoDRes.Close()
 	c.Assert(err, IsNil)

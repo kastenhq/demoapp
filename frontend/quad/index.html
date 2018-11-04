@@ -46,7 +46,7 @@ div.full figure:not(.expanded) { pointer-events: none; }
   <script type="text/javascript">
 $(document).ready(function() {
   $.ajax({
-    url: "/demoapp/metadata/v0/images",
+    url: window.location.href+"metadata/v0/images",
     type: "GET",
     dataType: "json",
 
@@ -54,7 +54,7 @@ $(document).ready(function() {
     data.forEach(element => {
       $.ajax(
         {
-          url: "/demoapp/metadata/v0/images/"+element.id,
+          url: window.location.href+"metadata/v0/images/"+element.id,
           type: "GET",
           dataType: "json",
         }
