@@ -7,6 +7,8 @@ import (
 
 	"github.com/globalsign/mgo"
 	"github.com/go-openapi/strfmt"
+	opentracing "github.com/opentracing/opentracing-go"
+	//"github.com/opentracing/opentracing-go/ext"
 
 	"metadata"
 	"models"
@@ -28,6 +30,9 @@ type Mongo struct {
 
 // GetAllImages returns all images meta data
 func (s *Mongo) GetAllImages(ctx context.Context) (models.ImageList, error) {
+	span, _ := opentracing.StartSpanFromContext(ctx, "GetAllImages request")
+	defer span.Finish()
+	addSpanTags(span)
 	err := s.Ping()
 	if err != nil {
 		return models.ImageList{}, err
@@ -39,6 +44,9 @@ func (s *Mongo) GetAllImages(ctx context.Context) (models.ImageList, error) {
 
 // FetchImage searches thru metadata and fetchs image data from store
 func (s *Mongo) FetchImage(ctx context.Context, id strfmt.UUID) (models.ImageData, error) {
+	span, _ := opentracing.StartSpanFromContext(ctx, "FetchImage request")
+	defer span.Finish()
+	addSpanTags(span)
 	imgs, err := s.FindImages(ctx, map[string]interface{}{"id": id})
 	if err != nil {
 		return "", err
@@ -61,6 +69,9 @@ func (s *Mongo) FetchImage(ctx context.Context, id strfmt.UUID) (models.ImageDat
 
 // FindImages performs a select and returns list of images
 func (s *Mongo) FindImages(ctx context.Context, tags map[string]interface{}) (models.ImageList, error) {
+	span, _ := opentracing.StartSpanFromContext(ctx, "FindImages request")
+	defer span.Finish()
+	addSpanTags(span)
 	err := s.Ping()
 	if err != nil {
 		return models.ImageList{}, err
@@ -74,6 +85,9 @@ func (s *Mongo) FindImages(ctx context.Context, tags map[string]interface{}) (mo
 
 // Delete removes meta data for porvided imagemeta
 func (s *Mongo) Delete(ctx context.Context, imgMeta *models.ImageMeta) error {
+	span, _ := opentracing.StartSpanFromContext(ctx, "DeleteImage request")
+	defer span.Finish()
+	addSpanTags(span)
 	err := s.Ping()
 	if err != nil {
 		return err
@@ -95,6 +109,9 @@ func (s *Mongo) Delete(ctx context.Context, imgMeta *models.ImageMeta) error {
 
 // Add call store service and creates meta data
 func (s *Mongo) Add(ctx context.Context, imgData models.ImageData) (*models.Image, error) {
+	span, _ := opentracing.StartSpanFromContext(ctx, "AddImage request")
+	defer span.Finish()
+	addSpanTags(span)
 	err := s.Ping()
 	if err != nil {
 		return nil, err
@@ -132,4 +149,9 @@ func (s *Mongo) Ping() error {
 		return err
 	}
 	return s.Conn.Ping()
+}
+
+func addSpanTags(span opentracing.Span) {
+	span.SetTag("Service", "metadata")
+	span.SetTag("DB Provider", "MongoDB")
 }
