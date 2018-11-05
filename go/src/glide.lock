@@ -1,8 +1,10 @@
-hash: 07bb9d00268c4791a4868ffd37c014cb90ab6c8b65276b8945ba072123e7bddd
-updated: 2018-10-29T10:04:09.015681968-07:00
+hash: fba4ea181afdcf175fb2217d4bb51b7a3a2164f1db09bb325a73b380ad9ae415
+updated: 2018-11-03T22:56:25.737816224-07:00
 imports:
 - name: github.com/asaskevich/govalidator
   version: f9ffefc3facfbe0caee3fea233cbb6e8208f4541
+- name: github.com/codahale/hdrhistogram
+  version: 3a0bb77429bd3a61596f5e8a3172445844342120
 - name: github.com/docker/go-units
   version: 47565b4f722fb6ceae66b95f853feed578a4a51c
 - name: github.com/globalsign/mgo
@@ -44,6 +46,8 @@ imports:
   version: 02826c3e79038b59d737d3b1c0a1d937f71a4433
 - name: github.com/jessevdk/go-flags
   version: 5de817a9aa209ed35a164cb04aec82b7df1a47a6
+- name: github.com/konsorten/go-windows-terminal-sequences
+  version: 5c8c8bd35d3832f5d134ae1e1e375b69a4d25242
 - name: github.com/mailru/easyjson
   version: 60711f1a8329503b04e1c88535f419d0bb440bff
   subpackages:
@@ -52,6 +56,15 @@ imports:
   - jwriter
 - name: github.com/mitchellh/mapstructure
   version: 3536a929edddb9a5b34bd6861dc4a9647cb459fe
+- name: github.com/opentracing-contrib/go-stdlib
+  version: 36723135187404d2f4002f4f189938565e64cc5c
+  subpackages:
+  - nethttp
+- name: github.com/opentracing/opentracing-go
+  version: 1949ddbfd147afd4d964a9f00b24eb291e0e7c38
+  subpackages:
+  - ext
+  - log
 - name: github.com/ory/dockertest
   version: 9f1141b78507d23603f6be530587664ebb63a8d2
   subpackages:
@@ -79,20 +92,55 @@ imports:
   - docker/types/registry
   - docker/types/strslice
   - docker/types/versions
+- name: github.com/pkg/errors
+  version: 645ef00459ed84a119197bfb8d8205042c6df63d
 - name: github.com/PuerkitoBio/purell
   version: 975f53781597ed779763b7b65566e74c4004d8de
 - name: github.com/PuerkitoBio/urlesc
   version: de5bf2ad457846296e2031421a34e2568e304e35
 - name: github.com/satori/go.uuid
   version: f58768cc1a7a7e77a3bd49e98cdd21419399b6a3
+- name: github.com/sirupsen/logrus
+  version: 566a5f690849162ff53cf98f3c42135389d63f95
 - name: github.com/tylerb/graceful
   version: d72b0151351a13d0421b763b88f791469c4f5dc7
+- name: github.com/uber/jaeger-client-go
+  version: b043381d944715b469fd6b37addfd30145ca1758
+  subpackages:
+  - config
+  - internal/baggage
+  - internal/baggage/remote
+  - internal/spanlog
+  - internal/throttler
+  - internal/throttler/remote
+  - log
+  - rpcmetrics
+  - thrift
+  - thrift-gen/agent
+  - thrift-gen/baggage
+  - thrift-gen/jaeger
+  - thrift-gen/sampling
+  - thrift-gen/zipkincore
+  - utils
+- name: github.com/uber/jaeger-lib
+  version: ed3a127ec5fef7ae9ea95b01b542c47fbd999ce5
+  subpackages:
+  - metrics
+- name: golang.org/x/crypto
+  version: dab2b1051b5dd33a57e97c4774ed152e6a6c9a13
+  subpackages:
+  - ssh/terminal
 - name: golang.org/x/net
   version: c44066c5c816ec500d459a2a324a753f78531ae0
   subpackages:
   - context
   - context/ctxhttp
   - idna
+- name: golang.org/x/sys
+  version: 95b1ffbd15a57cc5abb3f04402b9e8ec0016a52c
+  subpackages:
+  - unix
+  - windows
 - name: golang.org/x/text
   version: b19bf474d317b857955b12035d2c5acb57ce8b01
   subpackages:
@@ -125,8 +173,6 @@ testImports:
   version: 97c2040d34dfae1d1b1275fa3a78dbdd2f41cf7e
   subpackages:
   - nat
-- name: github.com/konsorten/go-windows-terminal-sequences
-  version: 5c8c8bd35d3832f5d134ae1e1e375b69a4d25242
 - name: github.com/kr/pretty
   version: 73f6ac0b30a98e433b289500d779f50c1a6f0712
 - name: github.com/kr/text
@@ -146,16 +192,3 @@ testImports:
   version: f3ce8221ea760f51b5403a9892a69ace43845c2c
   subpackages:
   - libcontainer/user
-- name: github.com/pkg/errors
-  version: 059132a15dd08d6704c67711dae0cf35ab991756
-- name: github.com/sirupsen/logrus
-  version: 566a5f690849162ff53cf98f3c42135389d63f95
-- name: golang.org/x/crypto
-  version: dab2b1051b5dd33a57e97c4774ed152e6a6c9a13
-  subpackages:
-  - ssh/terminal
-- name: golang.org/x/sys
-  version: 95b1ffbd15a57cc5abb3f04402b9e8ec0016a52c
-  subpackages:
-  - unix
-  - windows

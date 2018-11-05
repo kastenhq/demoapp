@@ -12,9 +12,11 @@ import (
 	log "github.com/sirupsen/logrus"
 	graceful "github.com/tylerb/graceful"
 
+	"requestid"
 	"store"
 	"store/local"
 	"storeserver/operations"
+	"tracing"
 )
 
 const (
@@ -34,6 +36,18 @@ func configureAPI(api *operations.StoreAPI) http.Handler {
 	//
 	// Example:
 	// api.Logger = log.Printf
+
+	api.ServerShutdown = func() {}
+	log.Info("Configuring tracing")
+	if closer, err := tracing.Configure("store"); err != nil {
+		log.Errorf("Unable to configure tracing. %s", err.Error())
+	} else {
+		tmp := api.ServerShutdown
+		api.ServerShutdown = func() {
+			closer.Close()
+			tmp()
+		}
+	}
 
 	api.JSONConsumer = runtime.JSONConsumer()
 
@@ -82,8 +96,6 @@ func configureAPI(api *operations.StoreAPI) http.Handler {
 		return healthzOK
 	})
 
-	api.ServerShutdown = func() {}
-
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares))
 }
 
@@ -102,7 +114,7 @@ func configureServer(s *graceful.Server, scheme, addr string) {
 // The middleware configuration is for the handler executors. These do not apply to the swagger.json document.
 // The middleware executes after routing but before authentication, binding and validation
 func setupMiddlewares(handler http.Handler) http.Handler {
-	return handler
+	return tracing.Middleware(requestid.PropagateOrGenerate(handler))
 }
 
 // The middleware configuration happens before anything, this middleware also applies to serving the swagger.json document.

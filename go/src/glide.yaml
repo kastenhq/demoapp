@@ -30,3 +30,11 @@ import:
   version: r2018.06.15
 - package: github.com/ory/dockertest
   version: v3.3.2
+- package: github.com/uber/jaeger-client-go
+  version: v2.14.0
+- package: github.com/uber/jaeger-lib
+  version: v1.5.0
+- package: github.com/opentracing-contrib/go-stdlib
+  version: 36723135187404d2f4002f4f189938565e64cc5c
+- package: github.com/opentracing/opentracing-go
+  version: v1.0.2

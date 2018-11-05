@@ -1,0 +1,103 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "jaeger-all-in-one.fullname" . }}-query
+  namespace: {{ default .Release.Namespace .Values.namespace }}
+  labels:
+    app: {{ template "jaeger-all-in-one.name" . }}
+    chart: {{ template "jaeger-all-in-one.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - name: http
+      port: {{ .Values.service.port }}
+      protocol: TCP
+      targetPort: 16686
+  selector:
+    app: {{ template "jaeger-all-in-one.name" . }}
+    release: {{ .Release.Name }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "jaeger-all-in-one.fullname" . }}-collector
+  namespace: {{ default .Release.Namespace .Values.namespace }}
+  labels:
+    app: {{ template "jaeger-all-in-one.name" . }}
+    chart: {{ template "jaeger-all-in-one.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - name: jaeger-collector-tchannel
+      port: 14267
+      protocol: TCP
+      targetPort: 14267
+    - name: jaeger-collector-http
+      port: 14268
+      protocol: TCP
+      targetPort: 14268
+    - name: jaeger-collector-zipkin
+      port: 9411
+      protocol: TCP
+      targetPort: 9411
+  selector:
+    app: {{ template "jaeger-all-in-one.name" . }}
+    release: {{ .Release.Name }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "jaeger-all-in-one.fullname" . }}-agent
+  namespace: {{ default .Release.Namespace .Values.namespace }}
+  labels:
+    app: {{ template "jaeger-all-in-one.name" . }}
+    chart: {{ template "jaeger-all-in-one.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  clusterIP: None
+  ports:
+    - name: agent-zipkin-thrift
+      port: 5775
+      protocol: UDP
+      targetPort: 5775
+    - name: agent-compact
+      port: 6831
+      protocol: UDP
+      targetPort: 6831
+    - name: agent-binary
+      port: 6832
+      protocol: UDP
+      targetPort: 6832
+    - name: agent-configs
+      port: 5778
+      protocol: TCP
+      targetPort: 5778
+  selector:
+    app: {{ template "jaeger-all-in-one.name" . }}
+    release: {{ .Release.Name }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "jaeger-all-in-one.fullname" . }}-zipkin
+  namespace: {{ default .Release.Namespace .Values.namespace }}
+  labels:
+    app: {{ template "jaeger-all-in-one.name" . }}
+    chart: {{ template "jaeger-all-in-one.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  clusterIP: None
+  ports:
+    - name: jaeger-collector-zipkin
+      port: 9411
+      protocol: TCP
+      targetPort: 9411
+  selector:
+    app: {{ template "jaeger-all-in-one.name" . }}
+    release: {{ .Release.Name }}
