@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "jaeger-all-in-one.fullname" . }}-query
+  namespace: {{ default .Release.Namespace .Values.namespace }}
   labels:
     app: {{ template "jaeger-all-in-one.name" . }}
     chart: {{ template "jaeger-all-in-one.chart" . }}
@@ -22,6 +23,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "jaeger-all-in-one.fullname" . }}-collector
+  namespace: {{ default .Release.Namespace .Values.namespace }}
   labels:
     app: {{ template "jaeger-all-in-one.name" . }}
     chart: {{ template "jaeger-all-in-one.chart" . }}
@@ -50,6 +52,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "jaeger-all-in-one.fullname" . }}-agent
+  namespace: {{ default .Release.Namespace .Values.namespace }}
   labels:
     app: {{ template "jaeger-all-in-one.name" . }}
     chart: {{ template "jaeger-all-in-one.chart" . }}
@@ -82,6 +85,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "jaeger-all-in-one.fullname" . }}-zipkin
+  namespace: {{ default .Release.Namespace .Values.namespace }}
   labels:
     app: {{ template "jaeger-all-in-one.name" . }}
     chart: {{ template "jaeger-all-in-one.chart" . }}

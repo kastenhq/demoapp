@@ -30,8 +30,8 @@ mongodb:
     tag: "3.6"
 
 jaeger:
-  enabled: false
-  agentDNS: demoapp-w-t-jaeger-agent.demoapp-w-t.svc.cluster.local
+  enabled: true
+  namespace: kube-system
 
 nginx:
   enabled: false
