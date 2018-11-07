@@ -3,6 +3,7 @@ package local
 import (
 	"context"
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"path/filepath"
 	"time"
@@ -45,7 +46,9 @@ func (s *HDD) Read(ctx context.Context, image *models.ImageMeta) (models.ImageDa
 	span, _ := opentracing.StartSpanFromContext(ctx, "ReadData request")
 	defer span.Finish()
 	addSpanTags(span)
+	timeout := time.Duration(int(time.Second) * rand.Intn(15))
 	fb, err := ioutil.ReadFile(image.Location)
+	time.Sleep(timeout)
 	if err != nil {
 		return "", err
 	}
