@@ -3,6 +3,9 @@
 BASE=$(pwd)
 
 pushd $(pwd)/go/src
+
+alias swagger="docker run --rm -it -e GOPATH=${GOPATH}:/go -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger"
+
 GOPATH=${BASE}/go swagger generate model --spec=${BASE}/swagger.yaml
 
 GOPATH=${BASE}/go swagger generate client --spec=${BASE}/swagger.yaml \
@@ -34,8 +37,13 @@ GOPATH=${BASE}/go swagger generate server --spec=${BASE}/swagger.yaml \
             --operation=listImages \
             --operation=getImage \
             --operation=deleteImage
+unalias swagger
+
+alias glide="docker run -ti -v $(pwd)/go:/go -w /go/src --rm kanisterio/build glide"
 
 GOPATH=${BASE}/go glide install --strip-vendor
+
+unalias glide
 
 GOPATH=${BASE}/go CGO_ENABLED=0 GO_EXTLINK_ENABLED=0 go install -v  ./...
 popd
