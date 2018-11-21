@@ -40,7 +40,7 @@ nginx:
   controller:
     ingressClass: demoapp-nginx-ingress
     service:
-      type: NodePort
+      type: ClusterIP
     scope:
       enabled: true
     extraArgs:
