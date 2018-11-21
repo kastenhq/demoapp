@@ -62,7 +62,7 @@ kubectl port-forward svc/demoapp-jaeger-query -n kube-system 8001:80
 ```
 then open http://127.0.0.1:8001
 
-You also can deploy app wiht internal ingress controller
+You also can deploy app with internal ingress controller
 
 ```
 helm install helm/demoapp/ --name demoapp --namespace demoapp --set nginx.enabled=true
