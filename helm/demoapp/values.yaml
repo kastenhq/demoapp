@@ -4,7 +4,7 @@
 
 image:
   repository: depohmel/demoapp-
-  tag: randtimeout
+  tag: multitracing
   pullPolicy: Always
 
 nameOverride: ""
